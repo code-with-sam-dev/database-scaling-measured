@@ -19,8 +19,12 @@ public class Stampede {
     public static void main(String[] args) throws Exception {
         int callers = Integer.parseInt(args[0]);
         String[] ports = {args[1], args[2]};
-        HttpClient http = HttpClient.newBuilder().executor(Executors.newVirtualThreadPerTaskExecutor()).build();
-        CountDownLatch ready = new CountDownLatch(callers), go = new CountDownLatch(1), done = new CountDownLatch(callers);
+        HttpClient http = HttpClient.newBuilder()
+                .executor(Executors.newVirtualThreadPerTaskExecutor())
+                .build();
+        CountDownLatch ready = new CountDownLatch(callers),
+                go = new CountDownLatch(1),
+                done = new CountDownLatch(callers);
         AtomicInteger ok = new AtomicInteger();
         try (var pool = Executors.newVirtualThreadPerTaskExecutor()) {
             for (int i = 0; i < callers; i++) {
@@ -29,7 +33,10 @@ public class Stampede {
                     ready.countDown();
                     try {
                         go.await();
-                        var r = http.send(HttpRequest.newBuilder(URI.create("http://localhost:" + port + "/products/42")).build(),
+                        var r = http.send(
+                                HttpRequest.newBuilder(URI.create(
+                                        "http://localhost:" + port + "/products/42"))
+                                        .build(),
                                 HttpResponse.BodyHandlers.ofString());
                         if (r.statusCode() == 200) ok.incrementAndGet();
                     } catch (Exception e) {

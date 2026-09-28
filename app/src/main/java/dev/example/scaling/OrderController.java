@@ -19,14 +19,18 @@ public class OrderController {
     @PostMapping("/orders/{id}/pay")
     @Transactional
     public Map<String, Object> pay(@PathVariable long id) {
-        db.sql("UPDATE orders SET status = 'PAID' WHERE id = :id").param("id", id).update();
+        db.sql("UPDATE orders SET status = 'PAID' WHERE id = :id")
+                .param("id", id)
+                .update();
         return Map.of("order", id, "status", "PAID");
     }
 
     /** Header X-Read-Your-Writes: true routes this read to the primary. */
     @GetMapping("/orders/{id}")
-    public Map<String, Object> get(@PathVariable long id,
-                                   @RequestHeader(value = "X-Read-Your-Writes", defaultValue = "false") boolean ryw) {
+    public Map<String, Object> get(
+            @PathVariable long id,
+            @RequestHeader(value = "X-Read-Your-Writes", defaultValue = "false")
+            boolean ryw) {
         ReadRouting.READ_YOUR_WRITES.set(ryw);
         try {
             return reads.find(id);

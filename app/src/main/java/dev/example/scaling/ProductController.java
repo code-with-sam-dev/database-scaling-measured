@@ -10,7 +10,8 @@ public class ProductController {
     private final ProductCache cache;
     private final String mode;
 
-    public ProductController(ProductCache cache, @Value("${cache.coalescing}") String mode) {
+    public ProductController(ProductCache cache,
+                             @Value("${cache.coalescing}") String mode) {
         this.cache = cache;
         this.mode = mode;
     }

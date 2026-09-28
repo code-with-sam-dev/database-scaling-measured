@@ -30,7 +30,8 @@ public class ProductCache {
     /** How many times this instance actually ran the database query. */
     final AtomicInteger databaseLoads = new AtomicInteger();
 
-    private final ConcurrentHashMap<String, CompletableFuture<String>> inFlight = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, CompletableFuture<String>> inFlight =
+            new ConcurrentHashMap<>();
 
     public ProductCache(JdbcClient db, StringRedisTemplate redis,
                         @Value("${cache.coalescing}") String coalescing,
@@ -46,8 +47,11 @@ public class ProductCache {
         String cached = redis.opsForValue().get(key);
         if (cached != null) return cached;
         return switch (coalescing) {
-            case "local" -> inFlight.computeIfAbsent(key, k -> CompletableFuture.supplyAsync(() -> loadAndCache(k, id)))
-                    .whenComplete((v, e) -> inFlight.remove(key)).join();
+            case "local" -> inFlight
+                    .computeIfAbsent(key, k -> CompletableFuture.supplyAsync(
+                            () -> loadAndCache(k, id)))
+                    .whenComplete((v, e) -> inFlight.remove(key))
+                    .join();
             case "redis" -> singleFlightAcrossInstances(key, id);
             default -> loadAndCache(key, id);
         };
@@ -56,7 +60,8 @@ public class ProductCache {
     private String singleFlightAcrossInstances(String key, long id) {
         String lock = "lock:" + key;
         String token = UUID.randomUUID().toString();
-        if (Boolean.TRUE.equals(redis.opsForValue().setIfAbsent(lock, token, Duration.ofSeconds(5)))) {
+        if (Boolean.TRUE.equals(
+                redis.opsForValue().setIfAbsent(lock, token, Duration.ofSeconds(5)))) {
             try {
                 // Re-check: the previous winner may have filled the cache and
                 // released the lock between our miss and our lock.
@@ -75,22 +80,35 @@ public class ProductCache {
         return loadAndCache(key, id);
     }
 
-    /** A price change: write Postgres first, then delete the cached copy so the next read reloads. */
+    /**
+     * A price change: write Postgres first, then delete the cached copy so the next
+     * read reloads.
+     */
     public void changePrice(long id, int priceCents) {
-        db.sql("UPDATE products SET price_cents = :p WHERE id = :id").param("p", priceCents).param("id", id).update();
+        db.sql("UPDATE products SET price_cents = :p WHERE id = :id")
+                .param("p", priceCents)
+                .param("id", id)
+                .update();
         redis.delete("product:" + id);
     }
 
     private String loadAndCache(String key, long id) {
         databaseLoads.incrementAndGet();
         // An expensive query, slowed to 200 ms on purpose so misses overlap.
-        String product = db.sql("SELECT name || ' ' || price_cents FROM products, pg_sleep(0.2) WHERE id = :id")
-                .param("id", id).query(String.class).single();
+        String product = db.sql("SELECT name || ' ' || price_cents "
+                        + "FROM products, pg_sleep(0.2) WHERE id = :id")
+                .param("id", id)
+                .query(String.class)
+                .single();
         redis.opsForValue().set(key, product, ttl);
         return product;
     }
 
     private static void sleep(long ms) {
-        try { Thread.sleep(ms); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
+        try {
+            Thread.sleep(ms);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 }

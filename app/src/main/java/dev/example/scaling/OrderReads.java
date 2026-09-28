@@ -18,7 +18,8 @@ public class OrderReads {
     public Map<String, Object> find(long id) {
         return db.sql("""
                 SELECT id, status,
-                       CASE WHEN pg_is_in_recovery() THEN 'replica' ELSE 'primary' END AS served_by
+                       CASE WHEN pg_is_in_recovery() THEN 'replica' \
+                ELSE 'primary' END AS served_by
                 FROM orders WHERE id = :id""")
                 .param("id", id).query().singleRow();
     }

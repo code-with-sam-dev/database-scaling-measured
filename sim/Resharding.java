@@ -26,7 +26,8 @@ public class Resharding {
 
     static long hash(String s) {
         try {
-            byte[] d = MessageDigest.getInstance("MD5").digest(s.getBytes(StandardCharsets.UTF_8));
+            byte[] d = MessageDigest.getInstance("MD5")
+                    .digest(s.getBytes(StandardCharsets.UTF_8));
             long h = 0;
             for (int i = 0; i < 8; i++) h = (h << 8) | (d[i] & 0xff);
             return h;
@@ -62,8 +63,12 @@ public class Resharding {
         }
         int min = Integer.MAX_VALUE, max = 0;
         for (int l : load) { min = Math.min(min, l); max = Math.max(max, l); }
-        System.out.printf("%-18s moved %6.2f%%   largest shard %5.1f%%   smallest %5.1f%%%n",
-                name, 100.0 * moved / hashes.length, 100.0 * max / hashes.length, 100.0 * min / hashes.length);
+        System.out.printf(
+                "%-18s moved %6.2f%%   largest shard %5.1f%%   smallest %5.1f%%%n",
+                name,
+                100.0 * moved / hashes.length,
+                100.0 * max / hashes.length,
+                100.0 * min / hashes.length);
     }
 
     public static void main(String[] args) {
@@ -71,7 +76,8 @@ public class Resharding {
         for (int i = 0; i < KEYS; i++) hashes[i] = hash("customer-" + i);
 
         System.out.println("1,000,000 keys, 4 shards -> 5 shards");
-        System.out.println("ideal for a balanced consistent hash: 20.00% move, every shard 20.0%");
+        System.out.println(
+                "ideal for a balanced consistent hash: 20.00% move, every shard 20.0%");
         System.out.println();
         compare("modulo", modulo(4), modulo(5), hashes);
         compare("ring, 1 vnode", ring(4, 1), ring(5, 1), hashes);

@@ -5,10 +5,15 @@ CREATE TABLE orders_p (LIKE orders) PARTITION BY RANGE (created_at);
 DO $$
 BEGIN
   FOR m IN 1..12 LOOP
-    EXECUTE format('CREATE TABLE orders_p_2026_%s PARTITION OF orders_p FOR VALUES FROM (%L) TO (%L)',
+    EXECUTE format(
+      'CREATE TABLE orders_p_2026_%s PARTITION OF orders_p '
+      || 'FOR VALUES FROM (%L) TO (%L)',
       lpad(m::text, 2, '0'),
       make_timestamptz(2026, m, 1, 0, 0, 0, 'UTC'),
-      CASE WHEN m = 12 THEN make_timestamptz(2027, 1, 1, 0, 0, 0, 'UTC') ELSE make_timestamptz(2026, m + 1, 1, 0, 0, 0, 'UTC') END);
+      CASE WHEN m = 12
+        THEN make_timestamptz(2027, 1, 1, 0, 0, 0, 'UTC')
+        ELSE make_timestamptz(2026, m + 1, 1, 0, 0, 0, 'UTC')
+      END);
   END LOOP;
 END $$;
 INSERT INTO orders_p SELECT * FROM orders;
