@@ -1,0 +1,27 @@
+$ EXPLAIN (ANALYZE, BUFFERS) SELECT id, amount_cents, created_at FROM orders WHERE customer_id = 424242 AND status = 'PENDING' ORDER BY created_at DESC LIMIT 20;
+                                                             QUERY PLAN                                                              
+-------------------------------------------------------------------------------------------------------------------------------------
+ Limit  (cost=146833.22..146833.23 rows=1 width=24) (actual time=332.546..342.141 rows=1 loops=1)
+   Buffers: shared hit=83337
+   ->  Sort  (cost=146833.22..146833.23 rows=1 width=24) (actual time=306.072..315.666 rows=1 loops=1)
+         Sort Key: created_at DESC
+         Sort Method: quicksort  Memory: 25kB
+         Buffers: shared hit=83337
+         ->  Gather  (cost=1000.00..146833.21 rows=1 width=24) (actual time=305.863..315.606 rows=1 loops=1)
+               Workers Planned: 2
+               Workers Launched: 2
+               Buffers: shared hit=83334
+               ->  Parallel Seq Scan on orders  (cost=0.00..145833.11 rows=1 width=24) (actual time=228.461..275.345 rows=0 loops=3)
+                     Filter: ((customer_id = 424242) AND (status = 'PENDING'::text))
+                     Rows Removed by Filter: 3333333
+                     Buffers: shared hit=83334
+ Planning:
+   Buffers: shared hit=97
+ Planning Time: 1.848 ms
+ JIT:
+   Functions: 13
+   Options: Inlining false, Optimization false, Expressions true, Deforming true
+   Timing: Generation 1.770 ms (Deform 0.692 ms), Inlining 0.000 ms, Optimization 7.810 ms, Emission 27.438 ms, Total 37.018 ms
+ Execution Time: 411.293 ms
+(22 rows)
+

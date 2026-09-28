@@ -1,0 +1,3 @@
+replay lag on the standby, sampled from pg_stat_replication (this machine)
+idle: 00:00:00.005994
+during a 2,000,000 row update: max sampled replay lag 824 ms

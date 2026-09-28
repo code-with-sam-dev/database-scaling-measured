@@ -1,0 +1,1 @@
+median 0.06 ms (min 0.04, max 0.22, 9 runs)

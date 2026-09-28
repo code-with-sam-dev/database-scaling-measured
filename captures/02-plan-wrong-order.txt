@@ -1,0 +1,28 @@
+$ CREATE INDEX orders_idx ON orders (created_at, status, customer_id);
+                                                             QUERY PLAN                                                              
+-------------------------------------------------------------------------------------------------------------------------------------
+ Limit  (cost=146834.61..146834.62 rows=1 width=24) (actual time=427.283..441.086 rows=1 loops=1)
+   Buffers: shared hit=83337
+   ->  Sort  (cost=146834.61..146834.62 rows=1 width=24) (actual time=396.065..409.867 rows=1 loops=1)
+         Sort Key: created_at DESC
+         Sort Method: quicksort  Memory: 25kB
+         Buffers: shared hit=83337
+         ->  Gather  (cost=1000.00..146834.60 rows=1 width=24) (actual time=229.591..409.791 rows=1 loops=1)
+               Workers Planned: 2
+               Workers Launched: 2
+               Buffers: shared hit=83334
+               ->  Parallel Seq Scan on orders  (cost=0.00..145834.50 rows=1 width=24) (actual time=292.915..348.223 rows=0 loops=3)
+                     Filter: ((customer_id = 424242) AND (status = 'PENDING'::text))
+                     Rows Removed by Filter: 3333333
+                     Buffers: shared hit=83334
+ Planning:
+   Buffers: shared hit=140 read=1
+   I/O Timings: shared read=0.026
+ Planning Time: 1.083 ms
+ JIT:
+   Functions: 13
+   Options: Inlining false, Optimization false, Expressions true, Deforming true
+   Timing: Generation 6.902 ms (Deform 4.047 ms), Inlining 0.000 ms, Optimization 4.405 ms, Emission 63.653 ms, Total 74.961 ms
+ Execution Time: 679.421 ms
+(23 rows)
+

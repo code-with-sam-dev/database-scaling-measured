@@ -1,0 +1,11 @@
+$ curl -s localhost:8081/products/42
+Mechanical keyboard 12900
+# a write straight to Postgres, the cache is not told
+$ psql -c "UPDATE products SET price_cents = 9900 WHERE id = 42"
+$ curl -s localhost:8081/products/42
+Mechanical keyboard 12900
+# the same change through the app: write Postgres, then delete the cache entry
+$ curl -s -X PUT localhost:8081/products/42/price/8900
+price changed, cache entry deleted
+$ curl -s localhost:8081/products/42
+Mechanical keyboard 8900

@@ -1,0 +1,14 @@
+# REPLAY PAUSED TO MAKE THE CONSISTENCY WINDOW VISIBLE
+replica $ SELECT pg_wal_replay_pause()
+replica $ SELECT pg_get_wal_replay_pause_state()
+paused
+primary $ UPDATE orders SET status = 'PAID' WHERE id = 1043 RETURNING status
+PAID
+UPDATE 1
+primary $ SELECT status FROM orders WHERE id = 1043
+PAID
+replica $ SELECT status FROM orders WHERE id = 1043
+PENDING
+replica $ SELECT pg_wal_replay_resume()
+replica $ SELECT status FROM orders WHERE id = 1043
+PAID

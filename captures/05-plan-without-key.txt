@@ -1,0 +1,45 @@
+$ EXPLAIN (ANALYZE, COSTS OFF, TIMING OFF) SELECT count(*) FROM orders_p WHERE customer_id = 424242;
+                                                         QUERY PLAN                                                         
+----------------------------------------------------------------------------------------------------------------------------
+ Aggregate (actual rows=1 loops=1)
+   ->  Append (actual rows=10 loops=1)
+         ->  Index Only Scan using orders_p_2026_01_customer_id_idx on orders_p_2026_01 orders_p_1 (actual rows=1 loops=1)
+               Index Cond: (customer_id = 424242)
+               Heap Fetches: 0
+         ->  Index Only Scan using orders_p_2026_02_customer_id_idx on orders_p_2026_02 orders_p_2 (actual rows=0 loops=1)
+               Index Cond: (customer_id = 424242)
+               Heap Fetches: 0
+         ->  Index Only Scan using orders_p_2026_03_customer_id_idx on orders_p_2026_03 orders_p_3 (actual rows=1 loops=1)
+               Index Cond: (customer_id = 424242)
+               Heap Fetches: 0
+         ->  Index Only Scan using orders_p_2026_04_customer_id_idx on orders_p_2026_04 orders_p_4 (actual rows=2 loops=1)
+               Index Cond: (customer_id = 424242)
+               Heap Fetches: 0
+         ->  Index Only Scan using orders_p_2026_05_customer_id_idx on orders_p_2026_05 orders_p_5 (actual rows=1 loops=1)
+               Index Cond: (customer_id = 424242)
+               Heap Fetches: 0
+         ->  Index Only Scan using orders_p_2026_06_customer_id_idx on orders_p_2026_06 orders_p_6 (actual rows=0 loops=1)
+               Index Cond: (customer_id = 424242)
+               Heap Fetches: 0
+         ->  Index Only Scan using orders_p_2026_07_customer_id_idx on orders_p_2026_07 orders_p_7 (actual rows=2 loops=1)
+               Index Cond: (customer_id = 424242)
+               Heap Fetches: 0
+         ->  Index Only Scan using orders_p_2026_08_customer_id_idx on orders_p_2026_08 orders_p_8 (actual rows=0 loops=1)
+               Index Cond: (customer_id = 424242)
+               Heap Fetches: 0
+         ->  Index Only Scan using orders_p_2026_09_customer_id_idx on orders_p_2026_09 orders_p_9 (actual rows=2 loops=1)
+               Index Cond: (customer_id = 424242)
+               Heap Fetches: 0
+         ->  Index Only Scan using orders_p_2026_10_customer_id_idx on orders_p_2026_10 orders_p_10 (actual rows=0 loops=1)
+               Index Cond: (customer_id = 424242)
+               Heap Fetches: 0
+         ->  Index Only Scan using orders_p_2026_11_customer_id_idx on orders_p_2026_11 orders_p_11 (actual rows=1 loops=1)
+               Index Cond: (customer_id = 424242)
+               Heap Fetches: 0
+         ->  Index Only Scan using orders_p_2026_12_customer_id_idx on orders_p_2026_12 orders_p_12 (actual rows=0 loops=1)
+               Index Cond: (customer_id = 424242)
+               Heap Fetches: 0
+ Planning Time: 1.989 ms
+ Execution Time: 3.886 ms
+(40 rows)
+

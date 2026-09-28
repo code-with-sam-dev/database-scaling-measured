@@ -1,0 +1,7 @@
+# REPLAY PAUSED TO MAKE THE CONSISTENCY WINDOW VISIBLE
+$ curl -X POST localhost:8081/orders/1043/pay
+{"order":1043,"status":"PAID"}
+$ curl localhost:8081/orders/1043 -H 'X-Read-Your-Writes: true'
+{"id":1043,"status":"PAID","served_by":"primary"}
+$ curl localhost:8081/orders/1043
+{"id":1043,"status":"PENDING","served_by":"replica"}

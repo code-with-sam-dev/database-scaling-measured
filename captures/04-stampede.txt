@@ -1,0 +1,20 @@
+# run 1
+none   500 callers, 500 answered  database loads: 500 (instance A 250, instance B 250)
+local  500 callers, 500 answered  database loads: 2 (instance A 1, instance B 1)
+redis  500 callers, 500 answered  database loads: 1 (instance A 0, instance B 1)
+# run 2
+none   500 callers, 500 answered  database loads: 500 (instance A 250, instance B 250)
+local  500 callers, 500 answered  database loads: 2 (instance A 1, instance B 1)
+redis  500 callers, 500 answered  database loads: 1 (instance A 0, instance B 1)
+# run 3
+none   500 callers, 500 answered  database loads: 500 (instance A 250, instance B 250)
+local  500 callers, 500 answered  database loads: 2 (instance A 1, instance B 1)
+redis  500 callers, 500 answered  database loads: 1 (instance A 0, instance B 1)
+# run 4
+none   500 callers, 500 answered  database loads: 500 (instance A 250, instance B 250)
+local  500 callers, 500 answered  database loads: 2 (instance A 1, instance B 1)
+redis  500 callers, 500 answered  database loads: 1 (instance A 1, instance B 0)
+# run 5
+none   500 callers, 500 answered  database loads: 500 (instance A 250, instance B 250)
+local  500 callers, 500 answered  database loads: 2 (instance A 1, instance B 1)
+redis  500 callers, 500 answered  database loads: 1 (instance A 0, instance B 1)

@@ -1,0 +1,11 @@
+$ EXPLAIN (ANALYZE, COSTS OFF, TIMING OFF) SELECT count(*) FROM orders_p WHERE created_at >= '2026-09-01' AND created_at < '2026-10-01' AND customer_id = 424242;
+                                                                         QUERY PLAN                                                                         
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Aggregate (actual rows=1 loops=1)
+   ->  Index Scan using orders_p_2026_09_customer_id_idx on orders_p_2026_09 orders_p (actual rows=2 loops=1)
+         Index Cond: (customer_id = 424242)
+         Filter: ((created_at >= '2026-09-01 00:00:00+00'::timestamp with time zone) AND (created_at < '2026-10-01 00:00:00+00'::timestamp with time zone))
+ Planning Time: 3.747 ms
+ Execution Time: 0.238 ms
+(6 rows)
+

@@ -1,0 +1,6 @@
+1,000,000 keys, 4 shards -> 5 shards
+ideal for a balanced consistent hash: 20.00% move, every shard 20.0%
+
+modulo             moved  80.02%   largest shard  20.1%   smallest  19.9%
+ring, 1 vnode      moved  23.55%   largest shard  27.7%   smallest   5.0%
+ring, 200 vnodes   moved  19.93%   largest shard  20.9%   smallest  18.8%

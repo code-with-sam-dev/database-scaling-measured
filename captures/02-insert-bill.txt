@@ -1,0 +1,4 @@
+100,000 rows inserted into a 1,000,000 row table, one statement, 7 runs, median (this machine)
+0 secondary indexes: median    107.5 ms  =  930414 rows/s
+1 secondary indexes: median    358.4 ms  =  279026 rows/s
+3 secondary indexes: median    829.5 ms  =  120557 rows/s
