@@ -1,12 +1,14 @@
 package dev.example.scaling;
 
 import java.time.Duration;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +34,13 @@ public class ProductCache {
 
     private final ConcurrentHashMap<String, CompletableFuture<String>> inFlight =
             new ConcurrentHashMap<>();
+
+    /** Delete the lock only if we still own it, in one atomic step on the server. */
+    private static final RedisScript<Long> RELEASE = RedisScript.of("""
+            if redis.call('get', KEYS[1]) == ARGV[1] then
+              return redis.call('del', KEYS[1])
+            end
+            return 0""", Long.class);
 
     public ProductCache(JdbcClient db, StringRedisTemplate redis,
                         @Value("${cache.coalescing}") String coalescing,
@@ -68,7 +77,7 @@ public class ProductCache {
                 String filled = redis.opsForValue().get(key);
                 return filled != null ? filled : loadAndCache(key, id);
             } finally {
-                if (token.equals(redis.opsForValue().get(lock))) redis.delete(lock);
+                redis.execute(RELEASE, List.of(lock), token);
             }
         }
         // Lost the race: wait for the winner to fill the cache rather than load.
